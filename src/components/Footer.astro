@@ -4,30 +4,14 @@ import { withBase } from '../consts';
 const today = new Date();
 ---
 
-<footer>
-	Copyright &copy; {today.getFullYear()} 정보체계관리단. Built with Astro.
-	<div class="links">
-		<a href={withBase('/tags/')}>태그</a>
-		<a href={withBase('/rss.xml')}>RSS</a>
+<footer class="border-t">
+	<div
+		class="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-2 px-4 py-6 text-sm text-muted-foreground"
+	>
+		<p>Copyright &copy; {today.getFullYear()} 정보체계관리단. Built with Astro.</p>
+		<div class="flex gap-4">
+			<a class="hover:text-foreground" href={withBase('/tags/')}>태그</a>
+			<a class="hover:text-foreground" href={withBase('/rss.xml')}>RSS</a>
+		</div>
 	</div>
 </footer>
-<style>
-	footer {
-		padding: 2em 1em 6em 1em;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
-		color: rgb(var(--gray));
-		text-align: center;
-	}
-	.links {
-		display: flex;
-		justify-content: center;
-		gap: 1em;
-		margin-top: 1em;
-	}
-	.links a {
-		color: rgb(var(--gray));
-	}
-	.links a:hover {
-		color: rgb(var(--gray-dark));
-	}
-</style>

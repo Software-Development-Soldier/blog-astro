@@ -1,8 +1,8 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { withBase } from '../consts';
-import FormattedDate from './FormattedDate.astro';
-import TagList from './TagList.astro';
+import { TAGS, withBase } from '../consts';
+import { formatDate } from '../lib/date';
+import { PostCard } from './PostCard';
 
 interface Props {
 	posts: CollectionEntry<'blog'>[];
@@ -14,52 +14,21 @@ const posts = [...Astro.props.posts].sort(
 );
 ---
 
-<ul class="posts">
+<ul class="grid gap-6 sm:grid-cols-2">
 	{
 		posts.map((post) => (
 			<li>
-				<a class="title" href={withBase(`/${post.id}/`)}>
-					<h2>{post.data.title}</h2>
-				</a>
-				<p class="date">
-					<FormattedDate date={post.data.pubDate} />
-				</p>
-				<p class="description">{post.data.description}</p>
-				<TagList tags={post.data.tags} />
+				<PostCard
+					title={post.data.title}
+					href={withBase(`/${post.id}/`)}
+					date={formatDate(post.data.pubDate)}
+					description={post.data.description}
+					tags={post.data.tags.map((tag) => ({
+						label: TAGS[tag].label,
+						href: withBase(`/tags/${tag}/`),
+					}))}
+				/>
 			</li>
 		))
 	}
 </ul>
-<style>
-	.posts {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-	.posts > li {
-		padding: 1.5em 0;
-		border-bottom: 1px solid rgb(var(--gray-light));
-	}
-	.posts > li:last-child {
-		border-bottom: none;
-	}
-	.title {
-		text-decoration: none;
-	}
-	.title h2 {
-		margin: 0;
-		font-size: 1.6em;
-		line-height: 1.3;
-	}
-	.title:hover h2 {
-		color: var(--accent);
-	}
-	.date {
-		margin: 0.3em 0 0;
-		color: rgb(var(--gray));
-		font-size: 0.85em;
-	}
-	.description {
-		margin: 0.6em 0 0.8em;
-	}
-</style>

@@ -2,7 +2,6 @@
 // global.css를 여기서 불러와 모든 페이지에 포함시킨다.
 import '../styles/global.css';
 import { SITE_TITLE, withBase } from '../consts';
-import { Font } from 'astro:assets';
 
 interface Props {
 	title: string;
@@ -23,8 +22,6 @@ const { title, description } = Astro.props;
 <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={withBase('/rss.xml')} />
 <meta name="generator" content={Astro.generator} />
 
-<Font cssVariable="--font-atkinson" preload />
-
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
 
@@ -37,3 +34,15 @@ const { title, description } = Astro.props;
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
+
+<!-- 화면이 그려지기 전에 다크 모드 여부를 정해 깜빡임을 막는다. -->
+<script is:inline>
+	(() => {
+		let saved = null;
+		try {
+			saved = localStorage.getItem('theme');
+		} catch {}
+		const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+		document.documentElement.classList.toggle('dark', dark);
+	})();
+</script>
