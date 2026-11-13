@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE, TAGS, type TagKey, withBase } from '../../consts';
+
+const posts = await getCollection('blog');
+const tags = (Object.keys(TAGS) as TagKey[])
+	.map((key) => ({
+		key,
+		...TAGS[key],
+		count: posts.filter((post) => post.data.tags.includes(key)).length,
+	}))
+	.filter((tag) => tag.count > 0);
+---
+
+<!doctype html>
+<html lang="ko">
+	<head>
+		<BaseHead title={`태그 | ${SITE_TITLE}`} description="태그별 글 모음" />
+		<style>
+			ul {
+				padding: 0;
+				list-style: none;
+			}
+			li {
+				padding: 0.8em 0;
+				border-bottom: 1px solid rgb(var(--gray-light));
+			}
+			.count {
+				color: rgb(var(--gray));
+			}
+			.description {
+				margin: 0.2em 0 0;
+				color: rgb(var(--gray));
+				font-size: 0.85em;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>태그</h1>
+			<ul>
+				{
+					tags.map((tag) => (
+						<li>
+							<a href={withBase(`/tags/${tag.key}/`)}>{tag.label}</a>
+							<span class="count">({tag.count})</span>
+							<p class="description">{tag.description}</p>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>

@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import PostList from '../../components/PostList.astro';
+import { SITE_TITLE, TAGS, type TagKey } from '../../consts';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return (Object.keys(TAGS) as TagKey[])
+		.map((tag) => ({
+			params: { tag },
+			props: { posts: posts.filter((post) => post.data.tags.includes(tag)) },
+		}))
+		.filter((path) => path.props.posts.length > 0);
+}
+
+const tag = Astro.params.tag as TagKey;
+const { posts } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ko">
+	<head>
+		<BaseHead title={`${TAGS[tag].label} | ${SITE_TITLE}`} description={TAGS[tag].description} />
+		<style>
+			.description {
+				color: rgb(var(--gray));
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>태그: {TAGS[tag].label}</h1>
+			<p class="description">{TAGS[tag].description}</p>
+			<PostList posts={posts} />
+		</main>
+		<Footer />
+	</body>
+</html>

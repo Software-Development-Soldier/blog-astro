@@ -1,0 +1,44 @@
+---
+import { TAGS, type TagKey, withBase } from '../consts';
+
+interface Props {
+	tags: TagKey[];
+}
+
+const { tags } = Astro.props;
+---
+
+{
+	tags.length > 0 && (
+		<ul class="tags">
+			{tags.map((tag) => (
+				<li>
+					<a href={withBase(`/tags/${tag}/`)}>{TAGS[tag].label}</a>
+				</li>
+			))}
+		</ul>
+	)
+}
+<style>
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5em;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.tags a {
+		display: inline-block;
+		padding: 0.1em 0.7em;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 999px;
+		color: rgb(var(--gray-dark));
+		font-size: 0.8em;
+		text-decoration: none;
+	}
+	.tags a:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+</style>

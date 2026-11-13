@@ -1,0 +1,39 @@
+---
+// global.css를 여기서 불러와 모든 페이지에 포함시킨다.
+import '../styles/global.css';
+import { SITE_TITLE, withBase } from '../consts';
+import { Font } from 'astro:assets';
+
+interface Props {
+	title: string;
+	description: string;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const { title, description } = Astro.props;
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+<link rel="icon" href={withBase('/favicon.ico')} />
+<link rel="sitemap" href={withBase('/sitemap-index.xml')} />
+<link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={withBase('/rss.xml')} />
+<meta name="generator" content={Astro.generator} />
+
+<Font cssVariable="--font-atkinson" preload />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="description" content={description} />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />

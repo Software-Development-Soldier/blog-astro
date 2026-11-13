@@ -1,0 +1,27 @@
+---
+import { withBase } from '../consts';
+
+interface Props {
+	// base를 뺀 사이트 내부 경로 (예: "/", "/tags/")
+	href: string;
+}
+
+const { href } = Astro.props;
+const target = withBase(href);
+const current = Astro.url.pathname.replace(/\/?$/, '/');
+const isActive = href === '/' ? current === target : current.startsWith(target);
+---
+
+<a href={target} class:list={[{ active: isActive }]}>
+	<slot />
+</a>
+<style>
+	a {
+		display: inline-block;
+		text-decoration: none;
+	}
+	a.active {
+		font-weight: bolder;
+		text-decoration: underline;
+	}
+</style>
