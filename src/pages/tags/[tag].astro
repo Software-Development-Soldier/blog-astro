@@ -1,10 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import Header from '../../components/Header.astro';
 import PostList from '../../components/PostList.astro';
 import { SITE_TITLE, TAGS, type TagKey } from '../../consts';
+import Base from '../../layouts/Base.astro';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
@@ -20,23 +18,10 @@ const tag = Astro.params.tag as TagKey;
 const { posts } = Astro.props;
 ---
 
-<!doctype html>
-<html lang="ko">
-	<head>
-		<BaseHead title={`${TAGS[tag].label} | ${SITE_TITLE}`} description={TAGS[tag].description} />
-		<style>
-			.description {
-				color: rgb(var(--gray));
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>태그: {TAGS[tag].label}</h1>
-			<p class="description">{TAGS[tag].description}</p>
-			<PostList posts={posts} />
-		</main>
-		<Footer />
-	</body>
-</html>
+<Base title={`${TAGS[tag].label} | ${SITE_TITLE}`} description={TAGS[tag].description}>
+	<section class="mb-10 flex flex-col gap-2">
+		<h1 class="text-3xl font-bold tracking-tight">태그: {TAGS[tag].label}</h1>
+		<p class="text-muted-foreground">{TAGS[tag].description}</p>
+	</section>
+	<PostList posts={posts} />
+</Base>

@@ -1,56 +1,45 @@
 ---
 import { REPO_URL, SITE_TITLE, withBase } from '../consts';
-import HeaderLink from './HeaderLink.astro';
+import { NavLink } from './NavLink';
+import { ThemeToggle } from './ThemeToggle';
+
+const links = [
+	{ href: '/', label: '홈' },
+	{ href: '/tags/', label: '태그' },
+];
+
+const current = Astro.url.pathname.replace(/\/?$/, '/');
+const isActive = (href: string) => {
+	const target = withBase(href);
+	return href === '/' ? current === target : current.startsWith(target);
+};
 ---
 
-<header>
-	<nav>
-		<h2>
-			<a href={withBase('/')}>{SITE_TITLE}</a>
-		</h2>
-		<div class="internal-links">
-			<HeaderLink href="/">홈</HeaderLink>
-			<HeaderLink href="/tags/">태그</HeaderLink>
-		</div>
-		<div class="external-links">
-			<a href={REPO_URL} target="_blank" rel="noopener">GitHub</a>
+<header class="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
+	<nav class="mx-auto flex h-14 w-full max-w-4xl items-center gap-1 px-4">
+		<a href={withBase('/')} class="mr-3 font-semibold tracking-tight">{SITE_TITLE}</a>
+		{
+			links.map((link) => (
+				<NavLink
+					href={withBase(link.href)}
+					label={link.label}
+					variant={isActive(link.href) ? 'secondary' : 'ghost'}
+					current={isActive(link.href)}
+				/>
+			))
+		}
+		<div class="ml-auto flex items-center gap-1">
+			<NavLink href={REPO_URL} label="GitHub" variant="outline" external className="max-sm:hidden" />
+			<ThemeToggle />
 		</div>
 	</nav>
 </header>
-<style>
-	header {
-		margin: 0;
-		padding: 0 1em;
-		background: white;
-		box-shadow: 0 2px 8px rgba(var(--black), 5%);
-	}
-	h2 {
-		margin: 0;
-		font-size: 1em;
-	}
 
-	h2 a,
-	h2 a.active {
-		text-decoration: none;
-	}
-	nav {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-	nav a {
-		padding: 1em 0.5em;
-		color: var(--black);
-		border-bottom: 4px solid transparent;
-		text-decoration: none;
-	}
-	nav a.active {
-		text-decoration: none;
-		border-bottom-color: var(--accent);
-	}
-	@media (max-width: 720px) {
-		.external-links {
-			display: none;
-		}
-	}
-</style>
+<script is:inline>
+	document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+		const dark = document.documentElement.classList.toggle('dark');
+		try {
+			localStorage.setItem('theme', dark ? 'dark' : 'light');
+		} catch {}
+	});
+</script>

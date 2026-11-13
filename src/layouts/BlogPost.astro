@@ -1,75 +1,45 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
-import TagList from '../components/TagList.astro';
-import { AUTHORS, SITE_TITLE } from '../consts';
+import { TagBadges } from '../components/TagBadges';
+import { Separator } from '../components/ui/separator';
+import { AUTHORS, SITE_TITLE, TAGS, withBase } from '../consts';
+import { formatDate } from '../lib/date';
+import Base from './Base.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, authors, tags } = Astro.props;
 ---
 
-<!doctype html>
-<html lang="ko">
-	<head>
-		<BaseHead title={`${title} | ${SITE_TITLE}`} description={description} />
-		<style>
-			.title {
-				margin-bottom: 2em;
-				padding-bottom: 1em;
-				border-bottom: 1px solid rgb(var(--gray-light));
-			}
-			.title h1 {
-				margin: 0 0 0.3em 0;
-				font-size: 2.2em;
-				line-height: 1.25;
-			}
-			.meta {
-				margin-bottom: 0.8em;
-				color: rgb(var(--gray));
-				font-size: 0.85em;
-			}
-			.meta a {
-				color: inherit;
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
-
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="title">
-					<h1>{title}</h1>
-					<div class="meta">
-						<FormattedDate date={pubDate} />
-						{
-							authors.map((key) => (
-								<span>
-									{' · '}
-									<a href={AUTHORS[key].url}>{AUTHORS[key].name}</a> ({AUTHORS[key].title})
-								</span>
-							))
-						}
-						{
-							updatedDate && (
-								<div class="last-updated-on">
-									최종 수정: <FormattedDate date={updatedDate} />
-								</div>
-							)
-						}
-					</div>
-					<TagList tags={tags} />
-				</div>
-				<slot />
-			</article>
-		</main>
-		<Footer />
-	</body>
-</html>
+<Base title={`${title} | ${SITE_TITLE}`} description={description}>
+	<article class="mx-auto max-w-2xl">
+		<header class="flex flex-col gap-3">
+			<h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
+			<p class="text-sm text-muted-foreground">
+				<time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+				{
+					authors.map((key) => (
+						<span>
+							{' · '}
+							<a class="underline-offset-4 hover:underline" href={AUTHORS[key].url}>
+								{AUTHORS[key].name}
+							</a>{' '}
+							({AUTHORS[key].title})
+						</span>
+					))
+				}
+				{updatedDate && <span> · 최종 수정: {formatDate(updatedDate)}</span>}
+			</p>
+			<TagBadges
+				tags={tags.map((tag) => ({
+					label: TAGS[tag].label,
+					href: withBase(`/tags/${tag}/`),
+				}))}
+			/>
+		</header>
+		<Separator className="my-8" />
+		<div class="prose max-w-none">
+			<slot />
+		</div>
+	</article>
+</Base>
